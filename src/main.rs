@@ -10,6 +10,11 @@ use sdl2::pixels::Color;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
 
+struct Circle {
+    x: i16,
+    y: i16,
+}
+
 pub fn main() -> Result<(), String> {
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
@@ -37,6 +42,8 @@ pub fn main() -> Result<(), String> {
 
     let mut event_pump = sdl_context.event_pump()?;
 
+    let mut circles = Vec::<Circle>::new();
+
     'running: loop {
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         canvas.clear();
@@ -54,24 +61,30 @@ pub fn main() -> Result<(), String> {
                     y,
                     ..
                 } => {
-                    canvas.circle(x as i16, y as i16, 50, Color::RGB(0, 255, 0))?;
+                    circles.push(Circle { x: x as i16, y: y as i16 });
                 },
 
                 _ => {},
             }
         }
 
+        frame(&mut canvas, &circles)?;
+
         canvas.present();
 
-        std::thread::sleep(Duration::from_millis(2000));
+        // std::thread::sleep(Duration::from_millis(2000));
     }
 
     Ok(())
 }
 
-fn frame(canvas: &mut Canvas<Window>) {
+fn frame(canvas: &mut Canvas<Window>, circles: &Vec<Circle>) -> Result<(), String> {
 
-
+    for circle in circles {
+        canvas.circle(circle.x, circle.y, 50, Color::RGB(0, 255, 0))?;
+    }
 
     canvas.present();
+
+    Ok(())
 }
