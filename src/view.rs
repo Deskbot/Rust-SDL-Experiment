@@ -1,3 +1,5 @@
+#![allow(non_upper_case_globals)]
+
 use sdl2::gfx::primitives::DrawRenderer;
 use sdl2::pixels::Color;
 use sdl2::render::Canvas;
@@ -26,13 +28,11 @@ impl View {
     }
 
     pub fn cursor_circle(&mut self, point: &Point) -> Result<(), String> {
-        self.canvas.aa_circle(point.x() as i16, point.y() as i16, 20, grey)?;
-        Ok(())
+        self.canvas.aa_circle(point.x() as i16, point.y() as i16, 20, grey)
     }
 
     pub fn circle(&mut self, point: &Point) -> Result<(), String> {
-        self.canvas.aa_circle(point.x() as i16, point.y() as i16, 20, green)?;
-        Ok(())
+        self.canvas.aa_circle(point.x() as i16, point.y() as i16, 20, green)
     }
 
     pub fn grid(&mut self, grid: &Grid) -> Result<(), String> {
@@ -53,9 +53,7 @@ impl View {
             end.x() as i16,
             end.y() as i16,
             colour,
-        )?;
-
-        Ok(())
+        )
     }
 
     pub fn shape(&mut self, points: &[Point]) -> Result<(), String> {
