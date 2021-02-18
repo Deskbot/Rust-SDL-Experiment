@@ -9,11 +9,7 @@ use sdl2::mouse::MouseButton;
 use sdl2::pixels::Color;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
-
-struct Circle {
-    x: i16,
-    y: i16,
-}
+use sdl2::rect::Point;
 
 pub fn main() -> Result<(), String> {
     let sdl_context = sdl2::init()?;
@@ -42,7 +38,7 @@ pub fn main() -> Result<(), String> {
 
     let mut event_pump = sdl_context.event_pump()?;
 
-    let mut circles = Vec::<Circle>::new();
+    let mut circles = Vec::<Point>::new();
 
     'running: loop {
         canvas.set_draw_color(Color::RGB(0, 0, 0));
@@ -61,7 +57,7 @@ pub fn main() -> Result<(), String> {
                     y,
                     ..
                 } => {
-                    circles.push(Circle { x: x as i16, y: y as i16 });
+                    circles.push(Point::new(x, y));
                 },
 
                 _ => {},
@@ -78,11 +74,13 @@ pub fn main() -> Result<(), String> {
     Ok(())
 }
 
-fn frame(canvas: &mut Canvas<Window>, circles: &Vec<Circle>) -> Result<(), String> {
+fn frame(canvas: &mut Canvas<Window>, circles: &Vec<Point>) -> Result<(), String> {
 
     for circle in circles {
-        canvas.circle(circle.x, circle.y, 50, Color::RGB(0, 255, 0))?;
+        canvas.circle(circle.x() as i16, circle.y() as i16, 50, Color::RGB(0, 255, 0))?;
     }
+
+    canvas.draw_lines(circles.as_ref())?;
 
     canvas.present();
 
