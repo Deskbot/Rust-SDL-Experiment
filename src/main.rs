@@ -109,7 +109,7 @@ impl Model {
 
         // circle at cursor
 
-        self.view.circle(&self.cursor)?;
+        self.view.cursor_circle(&self.cursor)?;
 
         Ok(())
     }
@@ -128,6 +128,11 @@ impl View {
             height,
             width,
         }
+    }
+
+    pub fn cursor_circle(&mut self, point: &Point) -> Result<(), String> {
+        self.canvas.circle(point.x() as i16, point.y() as i16, 20, Color::RGB(100, 100, 100))?;
+        Ok(())
     }
 
     pub fn circle(&mut self, point: &Point) -> Result<(), String> {
