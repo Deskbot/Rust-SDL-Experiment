@@ -4,7 +4,9 @@ mod grid;
 mod model;
 mod view;
 
-use sdl2::event::Event;
+use std::ops::{BitAnd, BitOr};
+
+use sdl2::{event::Event, keyboard::Mod};
 use sdl2::keyboard::Keycode;
 use sdl2::mouse::MouseButton;
 use sdl2::pixels::Color;
@@ -66,7 +68,18 @@ pub fn main() -> Result<(), String> {
                     ..
                 } => {
                     model.set_cursor(Point::new(x,y));
-                }
+                },
+
+                Event::KeyUp {
+                    keycode: Some(Keycode::S),
+                    keymod,
+                    ..
+                } => {
+                    if keymod.contains(Mod::LCTRLMOD) || keymod.contains(Mod::RCTRLMOD) {
+                        let svg = model.to_svg();
+                        println!("{}", svg);
+                    }
+                },
 
                 _ => {},
             }

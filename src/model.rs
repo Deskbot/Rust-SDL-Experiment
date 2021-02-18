@@ -1,3 +1,5 @@
+use std::{fmt, iter::FromIterator, ops::Add};
+
 use sdl2::rect::Point;
 
 use crate::{grid::Grid, view::View};
@@ -25,6 +27,21 @@ impl Model {
 
     pub fn set_cursor(&mut self, point: Point) {
         self.cursor = self.grid.nearest_vertex(&point);
+    }
+
+    pub fn to_svg(&self) -> String {
+        let opening = "<svg viewBox=\"0 0 200 100\" xmlns=\"http://www.w3.org/2000/svg\">";
+
+        let mut points = String::new();
+
+        for shape in &self.shape {
+            points = format!("{}{},{} ", points, shape.x(), shape.y());
+        }
+
+        let polygon = format!("<polygon points=\"{}\" fill=\"none\" stroke=\"black\" />", points);
+        let closing = "</svg>";
+
+        return format!("{}{}{}", opening, polygon, closing);
     }
 
     pub fn update(&mut self) -> Result<(), String> {

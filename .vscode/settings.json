@@ -1,9 +1,13 @@
 {
     "cSpell.words": [
         "Color",
+        "LCTRLMOD",
+        "RCTRLMOD",
         "Ramiel",
         "Rect",
+        "bitor",
         "centered",
+        "keymod",
         "libmath",
         "vsync"
     ]
