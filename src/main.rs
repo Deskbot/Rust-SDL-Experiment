@@ -11,11 +11,38 @@ use sdl2::render::Canvas;
 use sdl2::video::Window;
 use sdl2::rect::Point;
 
+struct Line {
+    start: Point,
+    end: Point,
+}
+
 struct Grid {
     size: i32,
 }
 
 impl Grid {
+    pub fn lines(&self, max_width: i32, max_height: i32) -> Vec<Line> {
+        let mut result = vec![];
+
+        // vertical lines
+        for i in (0..max_width).step_by(self.size as usize) {
+            result.push(Line {
+                start: Point::new(i, 0),
+                end: Point::new(i, max_height),
+            });
+        }
+
+        // horizontal lines
+        for j in (0..max_height).step_by(self.size as usize) {
+            result.push(Line {
+                start: Point::new(0, j),
+                end: Point::new(max_width, j),
+            });
+        }
+
+        return result;
+    }
+
     pub fn nearest_vertex(&self, point: &Point) -> Point {
         return Point::new(self.nearest(point.x()), self.nearest(point.y()));
     }
@@ -44,7 +71,7 @@ impl Model {
         Model {
             view,
             cursor: Point::new(0,0),
-            grid: Grid { size: 100 },
+            grid: Grid { size: 40 },
             shape: vec![],
         }
     }
@@ -80,23 +107,42 @@ impl Model {
 
         self.view.circle(&self.cursor)?;
 
+        // grid
+
+        self.view.grid(&self.grid)?;
+
         Ok(())
     }
 }
 
 struct View {
     canvas: Canvas<Window>,
+    height: i32,
+    width: i32,
 }
 
 impl View {
-    pub fn new(canvas: Canvas<Window>) -> View {
+    pub fn new(canvas: Canvas<Window>, width: i32, height: i32) -> View {
         View {
             canvas,
+            height,
+            width,
         }
     }
 
     pub fn circle(&mut self, point: &Point) -> Result<(), String> {
-        self.canvas.circle(point.x() as i16, point.y() as i16, 50, Color::RGB(0, 255, 0))?;
+        self.canvas.circle(point.x() as i16, point.y() as i16, 20, Color::RGB(0, 255, 0))?;
+        Ok(())
+    }
+
+    pub fn grid(&mut self, grid: &Grid) -> Result<(), String> {
+        self.canvas.set_draw_color(Color::RGB(100, 100, 100));
+
+        for line in grid.lines(self.height, self.width) {
+            let Line { start, end } = line;
+            self.canvas.draw_line(start, end)?;
+        }
+
         Ok(())
     }
 
@@ -120,6 +166,9 @@ pub fn main() -> Result<(), String> {
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
 
+    let width = 640;
+    let height = 480;
+
     let window = video_subsystem
         .window("Circles", 640, 480)
         .position_centered()
@@ -139,7 +188,7 @@ pub fn main() -> Result<(), String> {
     canvas.clear();
     canvas.present();
 
-    let mut model = Model::new(View::new(canvas));
+    let mut model = Model::new(View::new(canvas, width, height));
 
     let mut event_pump = sdl_context.event_pump()?;
 
