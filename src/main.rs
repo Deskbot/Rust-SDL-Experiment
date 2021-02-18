@@ -12,42 +12,34 @@ use sdl2::video::Window;
 use sdl2::rect::Point;
 
 struct Model {
-    canvas: Canvas<Window>,
     cursor: Point,
     shape: Vec<Point>,
+    view: View,
 }
 
 impl Model {
-    pub fn new(canvas: Canvas<Window>) -> Model {
+    pub fn new(view: View) -> Model {
         Model {
-            canvas,
+            view,
             cursor: Point::new(0,0),
             shape: vec![],
         }
     }
 
     pub fn update_frame(&mut self) -> Result<(), String> {
-        self.canvas.set_draw_color(Color::RGB(0, 0, 0));
-        self.canvas.clear();
-
         // circles
 
         for circle in &self.shape {
-            self.canvas.circle(circle.x() as i16, circle.y() as i16, 50, Color::RGB(0, 255, 0))?;
+            self.view.circle(circle)?;
         }
 
         // lines
 
-        self.canvas.set_draw_color(Color::RGB(0, 255, 0));
-        self.canvas.draw_lines(self.shape.as_ref())?;
+        self.view.lines(self.shape.as_ref())?;
 
         // circle at cursor
 
-        self.canvas.circle(self.cursor.x() as i16, self.cursor.y() as i16, 50, Color::RGB(0, 255, 0))?;
-
-        // update
-
-        self.canvas.present();
+        self.view.circle(&self.cursor)?;
 
         Ok(())
     }
@@ -58,6 +50,46 @@ impl Model {
 
     pub fn set_cursor(&mut self, point: Point) {
         self.cursor = point;
+    }
+
+    pub fn update(&mut self) -> Result<(), String> {
+        self.view.reset();
+        self.update_frame()?;
+        self.view.update();
+
+        Ok(())
+    }
+}
+
+struct View {
+    canvas: Canvas<Window>,
+}
+
+impl View {
+    pub fn new(canvas: Canvas<Window>) -> View {
+        View {
+            canvas,
+        }
+    }
+
+    pub fn circle(&mut self, point: &Point) -> Result<(), String> {
+        self.canvas.circle(point.x() as i16, point.y() as i16, 50, Color::RGB(0, 255, 0))?;
+        Ok(())
+    }
+
+    pub fn lines(&mut self, points: &[Point]) -> Result<(), String> {
+        self.canvas.set_draw_color(Color::RGB(0, 255, 0));
+        self.canvas.draw_lines(points)?;
+        Ok(())
+    }
+
+    pub fn reset(&mut self) {
+        self.canvas.set_draw_color(Color::RGB(0, 0, 0));
+        self.canvas.clear();
+    }
+
+    pub fn update(&mut self) {
+        self.canvas.present();
     }
 }
 
@@ -84,7 +116,7 @@ pub fn main() -> Result<(), String> {
     canvas.clear();
     canvas.present();
 
-    let mut model = Model::new(canvas);
+    let mut model = Model::new(View::new(canvas));
 
     let mut event_pump = sdl_context.event_pump()?;
 
@@ -117,7 +149,7 @@ pub fn main() -> Result<(), String> {
             }
         }
 
-        model.update_frame()?;
+        model.update();
 
         // std::thread::sleep(Duration::from_millis(2000));
     }
