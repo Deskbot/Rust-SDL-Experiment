@@ -11,6 +11,42 @@ use sdl2::render::Canvas;
 use sdl2::video::Window;
 use sdl2::rect::Point;
 
+struct Drawer {
+    canvas: Canvas<Window>,
+    cursor: Point,
+    shape: Vec<Point>,
+}
+
+impl Drawer {
+    pub fn new(canvas: Canvas<Window>) -> Drawer {
+        Drawer {
+            canvas,
+            cursor: Point::new(0,0),
+            shape: vec![],
+        }
+    }
+
+    pub fn update_frame(&mut self) -> Result<(), String> {
+        self.canvas.set_draw_color(Color::RGB(0, 0, 0));
+        self.canvas.clear();
+
+        for circle in &self.shape {
+            self.canvas.circle(circle.x() as i16, circle.y() as i16, 50, Color::RGB(0, 255, 0))?;
+        }
+
+        self.canvas.set_draw_color(Color::RGB(0, 0, 255));
+        self.canvas.draw_lines(self.shape.as_ref())?;
+
+        self.canvas.present();
+
+        Ok(())
+    }
+
+    pub fn add_point(&mut self, point: Point) {
+        self.shape.push(point);
+    }
+}
+
 pub fn main() -> Result<(), String> {
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
@@ -21,8 +57,6 @@ pub fn main() -> Result<(), String> {
         .build()
         .map_err(|e| e.to_string())?;
 
-    // the canvas allows us to both manipulate the property of the window and to change its content
-    // via hardware or software rendering. See CanvasBuilder for more info.
     let mut canvas = window
         .into_canvas()
         .target_texture()
@@ -30,20 +64,17 @@ pub fn main() -> Result<(), String> {
         .build()
         .map_err(|e| e.to_string())?;
 
-    println!("Using SDL_Renderer \"{}\"", canvas.info().name);
+    // init canvas
 
     canvas.set_draw_color(Color::RGB(0, 0, 0));
     canvas.clear();
     canvas.present();
 
+    let mut drawer = Drawer::new(canvas);
+
     let mut event_pump = sdl_context.event_pump()?;
 
-    let mut circles = Vec::<Point>::new();
-
     'running: loop {
-        canvas.set_draw_color(Color::RGB(0, 0, 0));
-        canvas.clear();
-
         for event in event_pump.poll_iter() {
             match event {
                 Event::Quit { .. }
@@ -57,16 +88,14 @@ pub fn main() -> Result<(), String> {
                     y,
                     ..
                 } => {
-                    circles.push(Point::new(x, y));
+                    drawer.add_point(Point::new(x, y));
                 },
 
                 _ => {},
             }
         }
 
-        frame(&mut canvas, &circles)?;
-
-        canvas.present();
+        drawer.update_frame()?;
 
         // std::thread::sleep(Duration::from_millis(2000));
     }
@@ -74,15 +103,3 @@ pub fn main() -> Result<(), String> {
     Ok(())
 }
 
-fn frame(canvas: &mut Canvas<Window>, circles: &Vec<Point>) -> Result<(), String> {
-
-    for circle in circles {
-        canvas.circle(circle.x() as i16, circle.y() as i16, 50, Color::RGB(0, 255, 0))?;
-    }
-
-    canvas.draw_lines(circles.as_ref())?;
-
-    canvas.present();
-
-    Ok(())
-}
