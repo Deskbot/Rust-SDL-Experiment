@@ -93,23 +93,23 @@ impl Model {
     }
 
     fn update_frame(&mut self) -> Result<(), String> {
+        // grid
+
+        self.view.grid(&self.grid)?;
+
+        // lines
+
+        self.view.lines(self.shape.as_ref())?;
+
         // circles
 
         for circle in &self.shape {
             self.view.circle(circle)?;
         }
 
-        // lines
-
-        self.view.lines(self.shape.as_ref())?;
-
         // circle at cursor
 
         self.view.circle(&self.cursor)?;
-
-        // grid
-
-        self.view.grid(&self.grid)?;
 
         Ok(())
     }
