@@ -170,7 +170,7 @@ pub fn main() -> Result<(), String> {
     let height = 480;
 
     let window = video_subsystem
-        .window("Circles", 640, 480)
+        .window("Ramiel", 640, 480)
         .position_centered()
         .build()
         .map_err(|e| e.to_string())?;
