@@ -7,6 +7,7 @@
         "Rect",
         "bitor",
         "centered",
+        "dialog",
         "keymod",
         "libmath",
         "vsync"

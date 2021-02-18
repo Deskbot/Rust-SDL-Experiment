@@ -4,8 +4,10 @@ mod grid;
 mod model;
 mod view;
 
-use std::ops::{BitAnd, BitOr};
+use std::fs::{self, File};
+use std::io::prelude::*;
 
+use nfd::Response;
 use sdl2::{event::Event, keyboard::Mod};
 use sdl2::keyboard::Keycode;
 use sdl2::mouse::MouseButton;
@@ -78,6 +80,7 @@ pub fn main() -> Result<(), String> {
                     if keymod.contains(Mod::LCTRLMOD) || keymod.contains(Mod::RCTRLMOD) {
                         let svg = model.to_svg();
                         println!("{}", svg);
+                        save_to_file(&svg);
                     }
                 },
 
@@ -93,3 +96,18 @@ pub fn main() -> Result<(), String> {
     Ok(())
 }
 
+fn save_to_file(s: &String) {
+    let result = nfd::open_save_dialog(None, None);
+
+    if let Ok(Response::Okay(file_path)) = result {
+        println!("Saving to: {}", file_path);
+        println!("File content: {}", s);
+
+        let result = File::create(file_path)
+            .and_then(|mut file| file.write_all(s.as_bytes()));
+
+        if result.is_err() {
+            println!("Could not write file.");
+        }
+    }
+}
