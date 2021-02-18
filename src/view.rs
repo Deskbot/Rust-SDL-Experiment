@@ -14,8 +14,8 @@ const green: Color = Color::RGB(0, 255, 0);
 
 pub struct View {
     canvas: Canvas<Window>,
-    height: i32,
-    width: i32,
+    pub height: i32,
+    pub width: i32,
 }
 
 impl View {

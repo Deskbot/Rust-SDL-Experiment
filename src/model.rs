@@ -30,7 +30,11 @@ impl Model {
     }
 
     pub fn to_svg(&self) -> String {
-        let opening = "<svg viewBox=\"0 0 200 100\" xmlns=\"http://www.w3.org/2000/svg\">";
+        let opening = format!(
+            "<svg viewBox=\"0 0 {} {}\" xmlns=\"http://www.w3.org/2000/svg\">",
+            self.view.width,
+            self.view.height
+        );
 
         let mut points = String::new();
 
