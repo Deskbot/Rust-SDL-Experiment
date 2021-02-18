@@ -11,15 +11,15 @@ use sdl2::render::Canvas;
 use sdl2::video::Window;
 use sdl2::rect::Point;
 
-struct Drawer {
+struct Model {
     canvas: Canvas<Window>,
     cursor: Point,
     shape: Vec<Point>,
 }
 
-impl Drawer {
-    pub fn new(canvas: Canvas<Window>) -> Drawer {
-        Drawer {
+impl Model {
+    pub fn new(canvas: Canvas<Window>) -> Model {
+        Model {
             canvas,
             cursor: Point::new(0,0),
             shape: vec![],
@@ -84,7 +84,7 @@ pub fn main() -> Result<(), String> {
     canvas.clear();
     canvas.present();
 
-    let mut drawer = Drawer::new(canvas);
+    let mut model = Model::new(canvas);
 
     let mut event_pump = sdl_context.event_pump()?;
 
@@ -102,7 +102,7 @@ pub fn main() -> Result<(), String> {
                     y,
                     ..
                 } => {
-                    drawer.add_point(Point::new(x, y));
+                    model.add_point(Point::new(x, y));
                 },
 
                 Event::MouseMotion {
@@ -110,14 +110,14 @@ pub fn main() -> Result<(), String> {
                     y,
                     ..
                 } => {
-                    drawer.set_cursor(Point::new(x,y));
+                    model.set_cursor(Point::new(x,y));
                 }
 
                 _ => {},
             }
         }
 
-        drawer.update_frame()?;
+        model.update_frame()?;
 
         // std::thread::sleep(Duration::from_millis(2000));
     }
