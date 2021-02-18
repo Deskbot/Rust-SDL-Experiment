@@ -37,21 +37,17 @@ impl Model {
 
     fn update_frame(&mut self) -> Result<(), String> {
         // grid
-
         self.view.grid(&self.grid)?;
 
         // lines
-
         self.view.shape(self.shape.as_ref())?;
 
         // circles
-
         for circle in &self.shape {
             self.view.circle(circle)?;
         }
 
         // circle at cursor
-
         self.view.cursor_circle(&self.cursor)?;
 
         Ok(())

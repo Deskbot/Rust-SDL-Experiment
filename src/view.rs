@@ -6,6 +6,10 @@ use sdl2::rect::Point;
 
 use crate::grid::{Grid, Line};
 
+const black: Color = Color::RGB(0, 0, 0);
+const grey: Color = Color::RGB(100, 100, 100);
+const green: Color = Color::RGB(0, 255, 0);
+
 pub struct View {
     canvas: Canvas<Window>,
     height: i32,
@@ -22,21 +26,21 @@ impl View {
     }
 
     pub fn cursor_circle(&mut self, point: &Point) -> Result<(), String> {
-        self.canvas.aa_circle(point.x() as i16, point.y() as i16, 20, Color::RGB(100, 100, 100))?;
+        self.canvas.aa_circle(point.x() as i16, point.y() as i16, 20, grey)?;
         Ok(())
     }
 
     pub fn circle(&mut self, point: &Point) -> Result<(), String> {
-        self.canvas.aa_circle(point.x() as i16, point.y() as i16, 20, Color::RGB(0, 255, 0))?;
+        self.canvas.aa_circle(point.x() as i16, point.y() as i16, 20, green)?;
         Ok(())
     }
 
     pub fn grid(&mut self, grid: &Grid) -> Result<(), String> {
-        self.canvas.set_draw_color(Color::RGB(100, 100, 100));
+        self.canvas.set_draw_color(grey);
 
         for line in grid.lines(self.width, self.height) {
             let Line { start, end } = line;
-            self.line(&start, &end, Color::RGB(100, 100, 100))?;
+            self.line(&start, &end, grey)?;
         }
 
         Ok(())
@@ -60,7 +64,7 @@ impl View {
         for point in points {
             match last_point {
                 None => (),
-                Some(last_point) => self.line(last_point, point, Color::RGB(0, 255, 0))?,
+                Some(last_point) => self.line(last_point, point, green)?,
             }
 
             last_point = Some(point);
@@ -70,7 +74,7 @@ impl View {
     }
 
     pub fn reset(&mut self) {
-        self.canvas.set_draw_color(Color::RGB(0, 0, 0));
+        self.canvas.set_draw_color(black);
         self.canvas.clear();
     }
 
