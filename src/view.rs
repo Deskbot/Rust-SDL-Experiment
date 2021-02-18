@@ -22,12 +22,12 @@ impl View {
     }
 
     pub fn cursor_circle(&mut self, point: &Point) -> Result<(), String> {
-        self.canvas.circle(point.x() as i16, point.y() as i16, 20, Color::RGB(100, 100, 100))?;
+        self.canvas.aa_circle(point.x() as i16, point.y() as i16, 20, Color::RGB(100, 100, 100))?;
         Ok(())
     }
 
     pub fn circle(&mut self, point: &Point) -> Result<(), String> {
-        self.canvas.circle(point.x() as i16, point.y() as i16, 20, Color::RGB(0, 255, 0))?;
+        self.canvas.aa_circle(point.x() as i16, point.y() as i16, 20, Color::RGB(0, 255, 0))?;
         Ok(())
     }
 
@@ -36,15 +36,36 @@ impl View {
 
         for line in grid.lines(self.width, self.height) {
             let Line { start, end } = line;
-            self.canvas.draw_line(start, end)?;
+            self.line(&start, &end, Color::RGB(100, 100, 100))?;
         }
 
         Ok(())
     }
 
-    pub fn lines(&mut self, points: &[Point]) -> Result<(), String> {
-        self.canvas.set_draw_color(Color::RGB(0, 255, 0));
-        self.canvas.draw_lines(points)?;
+    fn line(&mut self, start: &Point, end: &Point, colour: Color) -> Result<(), String> {
+        self.canvas.aa_line(
+            start.x() as i16,
+            start.y() as i16,
+            end.x() as i16,
+            end.y() as i16,
+            colour,
+        )?;
+
+        Ok(())
+    }
+
+    pub fn shape(&mut self, points: &[Point]) -> Result<(), String> {
+        let mut last_point: Option<&Point> = None;
+
+        for point in points {
+            match last_point {
+                None => (),
+                Some(last_point) => self.line(last_point, point, Color::RGB(0, 255, 0))?,
+            }
+
+            last_point = Some(point);
+        }
+
         Ok(())
     }
 

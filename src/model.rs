@@ -42,7 +42,7 @@ impl Model {
 
         // lines
 
-        self.view.lines(self.shape.as_ref())?;
+        self.view.shape(self.shape.as_ref())?;
 
         // circles
 
