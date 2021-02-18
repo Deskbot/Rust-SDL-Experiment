@@ -11,8 +11,30 @@ use sdl2::render::Canvas;
 use sdl2::video::Window;
 use sdl2::rect::Point;
 
+struct Grid {
+    size: i32,
+}
+
+impl Grid {
+    pub fn nearest_vertex(&self, point: &Point) -> Point {
+        return Point::new(self.nearest(point.x()), self.nearest(point.y()));
+    }
+
+    fn nearest(&self, i: i32) -> i32 {
+        let div = i / self.size;
+        let rem = i % self.size;
+
+        if rem < self.size / 2 {
+            return div * self.size;
+        } else {
+            return (div + 1) * self.size;
+        }
+    }
+}
+
 struct Model {
     cursor: Point,
+    grid: Grid,
     shape: Vec<Point>,
     view: View,
 }
@@ -22,6 +44,7 @@ impl Model {
         Model {
             view,
             cursor: Point::new(0,0),
+            grid: Grid { size: 10 },
             shape: vec![],
         }
     }

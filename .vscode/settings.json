@@ -3,6 +3,7 @@
         "Color",
         "Rect",
         "centered",
+        "libmath",
         "vsync"
     ]
 }
