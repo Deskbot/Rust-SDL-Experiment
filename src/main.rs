@@ -30,12 +30,22 @@ impl Drawer {
         self.canvas.set_draw_color(Color::RGB(0, 0, 0));
         self.canvas.clear();
 
+        // circles
+
         for circle in &self.shape {
             self.canvas.circle(circle.x() as i16, circle.y() as i16, 50, Color::RGB(0, 255, 0))?;
         }
 
-        self.canvas.set_draw_color(Color::RGB(0, 0, 255));
+        // lines
+
+        self.canvas.set_draw_color(Color::RGB(0, 255, 0));
         self.canvas.draw_lines(self.shape.as_ref())?;
+
+        // circle at cursor
+
+        self.canvas.circle(self.cursor.x() as i16, self.cursor.y() as i16, 50, Color::RGB(0, 255, 0))?;
+
+        // update
 
         self.canvas.present();
 
@@ -44,6 +54,10 @@ impl Drawer {
 
     pub fn add_point(&mut self, point: Point) {
         self.shape.push(point);
+    }
+
+    pub fn set_cursor(&mut self, point: Point) {
+        self.cursor = point;
     }
 }
 
@@ -90,6 +104,14 @@ pub fn main() -> Result<(), String> {
                 } => {
                     drawer.add_point(Point::new(x, y));
                 },
+
+                Event::MouseMotion {
+                    x,
+                    y,
+                    ..
+                } => {
+                    drawer.set_cursor(Point::new(x,y));
+                }
 
                 _ => {},
             }
