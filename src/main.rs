@@ -26,7 +26,23 @@ impl Model {
         }
     }
 
-    pub fn update_frame(&mut self) -> Result<(), String> {
+    pub fn add_point(&mut self, point: Point) {
+        self.shape.push(point);
+    }
+
+    pub fn set_cursor(&mut self, point: Point) {
+        self.cursor = point;
+    }
+
+    pub fn update(&mut self) -> Result<(), String> {
+        self.view.reset();
+        self.update_frame()?;
+        self.view.update();
+
+        Ok(())
+    }
+
+    fn update_frame(&mut self) -> Result<(), String> {
         // circles
 
         for circle in &self.shape {
@@ -40,22 +56,6 @@ impl Model {
         // circle at cursor
 
         self.view.circle(&self.cursor)?;
-
-        Ok(())
-    }
-
-    pub fn add_point(&mut self, point: Point) {
-        self.shape.push(point);
-    }
-
-    pub fn set_cursor(&mut self, point: Point) {
-        self.cursor = point;
-    }
-
-    pub fn update(&mut self) -> Result<(), String> {
-        self.view.reset();
-        self.update_frame()?;
-        self.view.update();
 
         Ok(())
     }
