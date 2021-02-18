@@ -138,7 +138,7 @@ impl View {
     pub fn grid(&mut self, grid: &Grid) -> Result<(), String> {
         self.canvas.set_draw_color(Color::RGB(100, 100, 100));
 
-        for line in grid.lines(self.height, self.width) {
+        for line in grid.lines(self.width, self.height) {
             let Line { start, end } = line;
             self.canvas.draw_line(start, end)?;
         }
