@@ -149,7 +149,7 @@ pub fn main() -> Result<(), String> {
             }
         }
 
-        model.update();
+        model.update()?;
 
         // std::thread::sleep(Duration::from_millis(2000));
     }
