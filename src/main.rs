@@ -44,17 +44,17 @@ impl Model {
         Model {
             view,
             cursor: Point::new(0,0),
-            grid: Grid { size: 10 },
+            grid: Grid { size: 100 },
             shape: vec![],
         }
     }
 
     pub fn add_point(&mut self, point: Point) {
-        self.shape.push(point);
+        self.shape.push(self.grid.nearest_vertex(&point));
     }
 
     pub fn set_cursor(&mut self, point: Point) {
-        self.cursor = point;
+        self.cursor = self.grid.nearest_vertex(&point);
     }
 
     pub fn update(&mut self) -> Result<(), String> {
