@@ -1,8 +1,6 @@
-use std::{fmt, iter::FromIterator, ops::Add};
-
 use sdl2::rect::Point;
 
-use crate::{grid::Grid, view::View};
+use crate::{grid::Grid, view::{self, View}};
 
 pub struct Model {
     cursor: Point,
@@ -23,6 +21,34 @@ impl Model {
 
     pub fn add_point(&mut self, point: Point) {
         self.shape.push(self.grid.nearest_vertex(&point));
+    }
+
+    pub fn delete_vertex(&mut self, vertex: &Point) -> Option<()> {
+        let pos = self.shape.iter().position(|x| *x == *vertex)?;
+        self.shape.remove(pos);
+        Some(())
+    }
+
+    pub fn get_vertex_near(&self, point: &Point) -> Option<&Point> {
+        let mut best_vertex = None;
+        let mut best_distance = None;
+
+        for vertex in &self.shape {
+            let distance = vertex.relative_distance(&point);
+
+            if distance < view::vertex_size as i32 {
+                continue;
+            }
+
+            if let None = best_distance {
+                best_distance = Some(distance)
+            } else if distance < best_distance.unwrap() {
+                best_distance = Some(distance);
+                best_vertex = Some(vertex);
+            }
+        }
+
+        return best_vertex;
     }
 
     pub fn set_cursor(&mut self, point: Point) {
@@ -72,5 +98,16 @@ impl Model {
         self.view.cursor_circle(&self.cursor)?;
 
         Ok(())
+    }
+}
+
+trait Geom {
+    fn relative_distance(&self, other: &Self) -> i32;
+}
+
+impl Geom for Point {
+    fn relative_distance(&self, other: &Self) -> i32 {
+        return (self.x() - other.x()).pow(2)
+            - (self.y() - other.y()).pow(2);
     }
 }

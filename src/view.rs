@@ -8,6 +8,8 @@ use sdl2::rect::Point;
 
 use crate::grid::{Grid, Line};
 
+pub const vertex_size: i16 = 20;
+
 const black: Color = Color::RGB(0, 0, 0);
 const grey: Color = Color::RGB(100, 100, 100);
 const green: Color = Color::RGB(0, 255, 0);
@@ -28,11 +30,11 @@ impl View {
     }
 
     pub fn cursor_circle(&mut self, point: &Point) -> Result<(), String> {
-        self.canvas.aa_circle(point.x() as i16, point.y() as i16, 20, grey)
+        self.canvas.aa_circle(point.x() as i16, point.y() as i16, vertex_size, grey)
     }
 
     pub fn circle(&mut self, point: &Point) -> Result<(), String> {
-        self.canvas.aa_circle(point.x() as i16, point.y() as i16, 20, green)
+        self.canvas.aa_circle(point.x() as i16, point.y() as i16, vertex_size, green)
     }
 
     pub fn grid(&mut self, grid: &Grid) -> Result<(), String> {

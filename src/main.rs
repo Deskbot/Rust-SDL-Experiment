@@ -74,6 +74,25 @@ pub fn main() -> Result<(), String> {
                     model.add_point(Point::new(x, y));
                 },
 
+                Event::MouseButtonDown {
+                    mouse_btn: MouseButton::Right,
+                    x,
+                    y,
+                    ..
+                } => {
+                    let point_to_remove =  model.get_vertex_near(&Point::new(x, y))
+                        .map(Point::clone);
+                    // don't hold a reference to the point in the model
+                    // because we need to mutate the model
+
+                    match point_to_remove {
+                        None => {},
+                        Some(vertex) => {
+                            model.delete_vertex(&vertex);
+                        }
+                    }
+                },
+
                 Event::MouseMotion {
                     x,
                     y,
