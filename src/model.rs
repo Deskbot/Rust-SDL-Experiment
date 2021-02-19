@@ -34,16 +34,17 @@ impl Model {
         let mut best_distance = None;
 
         for vertex in &self.shape {
-            let distance = vertex.relative_distance(&point);
+            let dist_squared = vertex.relative_distance(&point);
 
-            if distance < view::vertex_size as i32 {
+            if dist_squared > view::vertex_size.pow(2) as i32 {
                 continue;
             }
 
             if let None = best_distance {
-                best_distance = Some(distance)
-            } else if distance < best_distance.unwrap() {
-                best_distance = Some(distance);
+                best_distance = Some(dist_squared);
+                best_vertex = Some(vertex);
+            } else if dist_squared < best_distance.unwrap() {
+                best_distance = Some(dist_squared);
                 best_vertex = Some(vertex);
             }
         }
@@ -108,6 +109,6 @@ trait Geom {
 impl Geom for Point {
     fn relative_distance(&self, other: &Self) -> i32 {
         return (self.x() - other.x()).pow(2)
-            - (self.y() - other.y()).pow(2);
+            + (self.y() - other.y()).pow(2);
     }
 }
