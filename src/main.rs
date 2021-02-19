@@ -100,7 +100,7 @@ pub fn main() -> Result<(), String> {
                 } => {
                     let cursor_pos = Point::new(x,y);
 
-                    if let Some(existing_vertex) = model.get_vertex_near(&cursor_pos) {
+                    if let Some(&existing_vertex) = model.get_vertex_near(&cursor_pos) {
                         model.highlight(existing_vertex.clone());
                     }
 
