@@ -8,7 +8,10 @@ use std::fs::File;
 use std::io::prelude::*;
 
 use nfd::Response;
-use sdl2::{event::Event, keyboard::Mod};
+use sdl2::event::Event;
+use sdl2::image::LoadSurface;
+use sdl2::keyboard::Mod;
+use sdl2::surface::Surface;
 use sdl2::keyboard::Keycode;
 use sdl2::mouse::MouseButton;
 use sdl2::pixels::Color;
@@ -24,11 +27,18 @@ pub fn main() -> Result<(), String> {
     let width = 640;
     let height = 480;
 
-    let window = video_subsystem
+    let mut window = video_subsystem
         .window("Ramiel", 640, 480)
         .position_centered()
         .build()
         .map_err(|e| e.to_string())?;
+
+    // show logo
+
+    let logo: Surface = LoadSurface::from_file("./assets/logo.png")?;
+    window.set_icon(logo);
+
+    // turn window into canvas
 
     let mut canvas = window
         .into_canvas()
