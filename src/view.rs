@@ -11,6 +11,7 @@ use crate::grid::{Grid, Line};
 pub const vertex_size: i16 = 20;
 
 const black: Color = Color::RGB(0, 0, 0);
+const blue: Color = Color::RGB(0, 0, 255);
 const grey: Color = Color::RGB(100, 100, 100);
 const green: Color = Color::RGB(0, 255, 0);
 
@@ -48,6 +49,10 @@ impl View {
         Ok(())
     }
 
+    pub fn highlighted_circle(&mut self, point: &Point) -> Result<(), String> {
+        self.canvas.aa_circle(point.x() as i16, point.y() as i16, vertex_size, blue)
+    }
+
     fn line(&mut self, start: &Point, end: &Point, colour: Color) -> Result<(), String> {
         self.canvas.aa_line(
             start.x() as i16,
@@ -59,7 +64,7 @@ impl View {
     }
 
     pub fn shape(&mut self, points: &[Point]) -> Result<(), String> {
-        let mut last_point: Option<&Point> = None;
+        let mut last_point = None;
 
         for point in points {
             match last_point {

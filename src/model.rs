@@ -5,6 +5,7 @@ use crate::{grid::Grid, view::{self, View}};
 pub struct Model {
     cursor: Point,
     grid: Grid,
+    highlighted_vertex: Option<Point>,
     shape: Vec<Point>,
     view: View,
 }
@@ -15,6 +16,7 @@ impl Model {
             view,
             cursor: Point::new(0,0),
             grid: Grid { size: 40 },
+            highlighted_vertex: None,
             shape: vec![],
         }
     }
@@ -50,6 +52,10 @@ impl Model {
         }
 
         return best_vertex;
+    }
+
+    pub fn highlight(&mut self, point: Point) {
+        self.highlighted_vertex = Some(point);
     }
 
     pub fn set_cursor(&mut self, point: Point) {
@@ -96,7 +102,11 @@ impl Model {
         }
 
         // circle at cursor
-        self.view.cursor_circle(&self.cursor)?;
+        if self.highlighted_vertex.map_or(false, |highlighted| highlighted == self.cursor) {
+            self.view.highlighted_circle(&self.cursor)?;
+        } else {
+            self.view.cursor_circle(&self.cursor)?;
+        }
 
         Ok(())
     }

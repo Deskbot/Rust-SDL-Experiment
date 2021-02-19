@@ -98,6 +98,12 @@ pub fn main() -> Result<(), String> {
                     y,
                     ..
                 } => {
+                    let cursor_pos = Point::new(x,y);
+
+                    if let Some(existing_vertex) = model.get_vertex_near(&cursor_pos) {
+                        model.highlight(existing_vertex.clone());
+                    }
+
                     model.set_cursor(Point::new(x,y));
                 },
 
