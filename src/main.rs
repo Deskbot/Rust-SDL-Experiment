@@ -71,7 +71,18 @@ pub fn main() -> Result<(), String> {
                     y,
                     ..
                 } => {
-                    model.add_point(Point::new(x, y));
+                    let p = Point::new(x, y);
+                    match model.get_vertex_near(&p) {
+                        None => model.add_point(p),
+                        Some(&existing) => model.start_dragging(existing),
+                    }
+                },
+
+                Event::MouseButtonUp {
+                    mouse_btn: MouseButton::Left,
+                    ..
+                } => {
+                    model.stop_dragging();
                 },
 
                 Event::MouseButtonDown {
@@ -104,7 +115,8 @@ pub fn main() -> Result<(), String> {
                         model.highlight(existing_vertex.clone());
                     }
 
-                    model.set_cursor(Point::new(x,y));
+                    model.drag_to_point_near(&cursor_pos);
+                    model.set_cursor(cursor_pos);
                 },
 
                 Event::KeyUp {

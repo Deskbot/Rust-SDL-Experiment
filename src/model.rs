@@ -4,6 +4,7 @@ use crate::{grid::Grid, view::{self, View}};
 
 pub struct Model {
     cursor: Point,
+    dragging: Option<Point>,
     grid: Grid,
     highlighted_vertex: Option<Point>,
     shape: Vec<Point>,
@@ -15,6 +16,7 @@ impl Model {
         Model {
             view,
             cursor: Point::new(0,0),
+            dragging: None,
             grid: Grid { size: 40 },
             highlighted_vertex: None,
             shape: vec![],
@@ -29,6 +31,25 @@ impl Model {
         let pos = self.shape.iter().position(|x| *x == *vertex)?;
         self.shape.remove(pos);
         Some(())
+    }
+
+    pub fn drag_to_point_near(&mut self, point: &Point) {
+        if !self.is_dragging() {
+            return;
+        }
+
+        let destination = self.grid.nearest_vertex(point);
+
+        // find the vertex being dragged
+        let maybe_index = self.shape.iter().position(|&vertex| vertex == self.dragging.unwrap());
+
+        match maybe_index {
+            None => {},
+            Some(index) => {
+                self.shape[index] = destination;
+                self.dragging = Some(destination);
+            },
+        }
     }
 
     pub fn get_vertex_near(&self, point: &Point) -> Option<&Point> {
@@ -58,8 +79,20 @@ impl Model {
         self.highlighted_vertex = Some(point);
     }
 
+    pub fn is_dragging(&self) -> bool {
+        return self.dragging.is_some();
+    }
+
     pub fn set_cursor(&mut self, point: Point) {
         self.cursor = self.grid.nearest_vertex(&point);
+    }
+
+    pub fn start_dragging(&mut self, point: Point) {
+        self.dragging = Some(point);
+    }
+
+    pub fn stop_dragging(&mut self) {
+        self.dragging = None;
     }
 
     pub fn to_svg(&self) -> String {
