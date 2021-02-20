@@ -34,21 +34,19 @@ impl Model {
     }
 
     pub fn drag_to_point_near(&mut self, point: &Point) {
-        if !self.is_dragging() {
-            return;
-        }
-
-        let destination = self.grid.nearest_vertex(point);
-
         // find the vertex being dragged
-        let maybe_index = self.shape.iter().position(|&vertex| vertex == self.dragging.unwrap());
+        if let Some(dragging) = self.dragging {
+            let maybe_index = self.shape.iter().position(|&vertex| vertex == dragging);
 
-        match maybe_index {
-            None => {},
-            Some(index) => {
-                self.shape[index] = destination;
-                self.dragging = Some(destination);
-            },
+            let destination = self.grid.nearest_vertex(point);
+
+            match maybe_index {
+                None => {},
+                Some(index) => {
+                    self.shape[index] = destination;
+                    self.dragging = Some(destination);
+                },
+            }
         }
     }
 
