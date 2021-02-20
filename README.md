@@ -1,8 +1,8 @@
-# Ramiel
+# Rust SDL Experimentation
 
 A simple SVG drawing tool.
 
-This project is mostly a learning exercise but it's intended to be useful.
+This project is mostly a learning exercise. I've put it down due to hitting a wall with Rust.
 
 * It can only be used to draw a single polygon.
 * It only saves to SVG.
