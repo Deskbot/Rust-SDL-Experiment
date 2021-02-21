@@ -72,9 +72,11 @@ pub fn main() -> Result<(), String> {
                     ..
                 } => {
                     let p = Point::new(x, y);
-                    match model.get_vertex_near(&p) {
-                        None => model.add_point(p),
-                        Some(&existing) => model.start_dragging(existing),
+
+                    let result = model.start_dragging(&p);
+
+                    if result.is_none() {
+                        model.add_point(p);
                     }
                 },
 

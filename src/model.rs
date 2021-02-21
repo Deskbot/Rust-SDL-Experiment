@@ -4,7 +4,7 @@ use crate::{grid::Grid, view::{self, View}};
 
 pub struct Model {
     cursor: Point,
-    dragging: Option<Point>,
+    dragging: Option<usize>, // references a member of shape
     grid: Grid,
     highlighted_vertex: Option<Point>,
     shape: Vec<Point>,
@@ -35,18 +35,9 @@ impl Model {
 
     pub fn drag_to_point_near(&mut self, point: &Point) {
         // find the vertex being dragged
-        if let Some(dragging) = self.dragging {
-            let maybe_index = self.shape.iter().position(|&vertex| vertex == dragging);
-
+        if let Some(moving_index) = self.dragging {
             let destination = self.grid.nearest_vertex(point);
-
-            match maybe_index {
-                None => {},
-                Some(index) => {
-                    self.shape[index] = destination;
-                    self.dragging = Some(destination);
-                },
-            }
+            self.shape[moving_index] = destination;
         }
     }
 
@@ -85,8 +76,14 @@ impl Model {
         self.cursor = self.grid.nearest_vertex(&point);
     }
 
-    pub fn start_dragging(&mut self, point: Point) {
-        self.dragging = Some(point);
+    pub fn start_dragging(&mut self, point: &Point) -> Option<()> {
+        let v = self.get_vertex_near(point)?;
+
+        let dragging_index = self.shape.iter().position(|vertex| vertex == v)?;
+
+        self.dragging = Some(dragging_index);
+
+        Some(())
     }
 
     pub fn stop_dragging(&mut self) {
