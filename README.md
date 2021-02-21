@@ -12,6 +12,7 @@ This project is mostly a learning exercise.
 ## How to Use
 
 * Left-click to add a vertex.
+* Left-click and drag to move a vertex.
 * Right-click to delete a vertex.
 * Ctrl+S to save as SVG.
 
